@@ -1,0 +1,271 @@
+{% extends 'Base.html' %}
+      {% block body %}
+<title>Attendance System</title>
+<style>
+       body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+background-image: url("{{ url_for('static', filename='Attendance_bg.jpg') }}");
+
+background-repeat: no-repeat;
+background-position: center;
+background-attachment: fixed;
+background-size: cover;
+
+}
+.container{
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px gray;
+    
+}
+h1, h2, h3{
+    text-align: center;
+    color: #333;
+}
+input[type="text"], select{
+    padding: 10px;
+    width: 70%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+select {
+    width: 50%;
+    margin-right: 10px;
+}
+button{
+    padding: 10px 20px;
+    background: orange;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button:hover {
+    background: darkorange;
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td{
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    color: #333;
+}
+th{
+    background: Black;
+    color: white;
+}
+.status-present{
+    color: green;
+    font-weight: bold;
+}
+.status-absent{
+    color: red;
+    font-weight: bold;
+}
+.summary-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.card {
+    background: #fcfcfc;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
+    width: 28%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.card h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #666;
+    text-transform: uppercase;
+}
+.card p {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+.filter-box {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px dashed #ccc;
+    text-align: center;
+    margin-bottom: 20px;
+    
+
+
+  
+
+}
+
+.alert-btn{
+    width:60%;
+    padding:13px;
+    border:none;
+    border-radius:10px;
+    color:white;
+    font-size:15px;
+    text-align: center;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.3s;
+    background-color: #F34825;
+    }
+    
+
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+        }
+
+        p {
+            margin: 0;
+            color: #e2e8f0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+.hero-background {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.5), rgll
+    url("/static/Attendance_bg.jpg");
+  background-position: center;
+  background-size: cover;
+}
+
+
+</style>
+</head>
+<body>
+
+
+<div class="container">
+<h1>✨Attendance System ✨</h1>
+
+<form action="/add_student" method="POST">
+    <input type="text" name="name" placeholder="Student Name" required>
+    <button type="submit">Add Student</button>
+</form>
+
+<h2>Students</h2>
+
+{% if students %}
+<form action="/mark" method="POST">
+<table>
+<tr>
+<th>Name</th>
+<th>Present</th>
+<th>Absent</th>
+</tr>
+
+{% for student in students %}
+<tr>
+<td>{{ student.name }}</td>
+<td><input type="radio" name="status_{{student.id}}" value="Present" checked></td>
+<td><input type="radio" name="status_{{student.id}}" value="Absent"></td>
+</tr>
+{% endfor %}
+
+</table>
+<br>
+<button type="submit" style="display:block; margin:auto;">Save Attendance</button>
+</form>
+{% else %}
+<button class='alert-btn' type="text">No students added yet.</button>
+{% endif %}
+
+<h2>📑Summary Stats</h2>
+<div class="summary-container">
+    <div class="card">
+        <h3>Total Days Marked</h3>
+        <p>{{ total_days }}</p>
+    </div>
+    <div class="card">
+        <h3>Total Presents</h3>
+        <p style="color: green;">{{ total_presents }}</p>
+    </div>
+    <div class="card">
+        <h3>Total Absents</h3>
+        <p style="color: red;">{{ total_absents }}</p>
+    </div>
+</div>
+
+<h2>📕Individual Student History</h2>
+<div class="filter-box">
+    <form action="/attendance" method="GET">
+        <select name="selected_student">
+            <option value="">-- Select a Student --</option>
+            {% for student in students %}
+                <option value="{{ student.name }}" {% if student.name == selected_student %}selected{% endif %}>
+                    {{ student.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit" style="background-color: #007BFF;">View History</button>
+        {% if selected_student %}
+            <a href="/" style="margin-left: 10px; color: #666; text-decoration: none;">Clear Filter</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if selected_student %}
+    <h3>Showing Dates for: {{ selected_student }}</h3>
+    {% if student_records %}
+        <p style="text-align:center;">Attendance Rate: <strong>{{ attendance_rate }}%</strong></p>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+            {% for record in student_records %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td class="status-{{ record.status|lower }}">{{ record.status }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p style="text-align:center; color: #777;">No attendance records found for this student.</p>
+    {% endif %}
+{% endif %}
+
+<hr style="margin-top: 40px; border: 0; border-top: 1px solid #eee;">
+
+<h2>📌All Attendance Records</h2>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+
+{% for record in records %}
+<tr>
+<td>{{ record.student_name }}</td>
+<td class="status-{{ record.status|lower }}">{{ record.status }}</td>
+<td>{{ record.date }}</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+  {% endblock body %}
+
