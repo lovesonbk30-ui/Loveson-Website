@@ -1,0 +1,120 @@
+{% extends 'Base.html' %}
+      {% block body %}
+      <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  margin: 0; padding: 20px; min-height: 100vh;
+  background: radial-gradient(circle at top right, #111827, #030712);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: flex; justify-content: center; align-items: center;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after { box-sizing: inherit; }
+
+.contact-container {
+  max-width: 480px; width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  padding: 40px; border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.form-header { text-align: center; margin-bottom: 28px; }
+.form-header h2 { color: #ffffff; margin: 0 0 6px 0; font-size: 1.8rem; }
+.form-header p { color: #94a3b8; margin: 0; font-size: 0.9rem; }
+
+/* Flash message banner */
+.flash-success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: #a7f3d0;
+  padding: 12px; border-radius: 8px;
+  font-size: 0.9rem; text-align: center;
+  margin-bottom: 24px;
+}
+
+.input-group { position: relative; margin-bottom: 20px; }
+.input-group input, .input-group textarea {
+  width: 100%; padding: 14px; background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px;
+  outline: none; color: #ffffff; font-family: inherit; font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+.input-group textarea { resize: vertical; min-height: 100px; }
+
+.input-group input:focus, .input-group textarea:focus {
+  border-color: #6366f1; background: rgba(99, 102, 241, 0.03);
+}
+
+.input-group label {
+  position: absolute; left: 14px; top: 14px; color: #64748b;
+  pointer-events: none; transition: all 0.2s ease; font-size: 0.95rem;
+}
+
+.input-group input:focus ~ label, .input-group input:not(:placeholder-shown) ~ label,
+.input-group textarea:focus ~ label, .input-group textarea:not(:placeholder-shown) ~ label {
+  top: -10px; left: 10px; font-size: 0.75rem; font-weight: 600;
+  color: #818cf8; background: #0b0f19; padding: 2px 6px; border-radius: 4px;
+}
+
+.submit-btn {
+  width: 100%; background: #4f46e5; color: white; border: none;
+  padding: 14px; border-radius: 10px; font-family: inherit;
+  font-weight: 600; font-size: 1rem; cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.submit-btn:hover { background: #4338ca; transform: translateY(-1px); }
+.submit-btn:active { transform: translateY(0); }
+
+      </style>
+      <body>
+<div class="contact-container">
+    <div class="form-header">
+      <h2>Get in Touch</h2>
+      <p>Have a question? Drop us a message!</p>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-success">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form class="contact-form" action="/contact" method="POST">
+      
+      <div class="input-group">
+        <input type="text" id="name" name="name" required placeholder=" ">
+        <label for="name">Your Name</label>
+      </div>
+
+      <div class="input-group">
+        <input type="email" id="email" name="email" required placeholder=" ">
+        <label for="email">Email Address</label>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="subject" name="subject" required placeholder=" ">
+        <label for="subject">Subject</label>
+      </div>
+
+      <div class="input-group">
+        <textarea id="message" name="message" rows="5" required placeholder=" "></textarea>
+        <label for="message">Your Message</label>
+      </div>
+
+      <button type="submit" class="submit-btn">Send Message</button>
+      
+    </form>
+  </div>
+
+
+
+        </body>
+    
+    
+   {% endblock body %}
