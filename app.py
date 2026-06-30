@@ -166,7 +166,6 @@ def contact():
 
     return render_template('Contact.html')
 
-
 @app.route('/quiz')
 def quiz():
 	return render_template('Quiz.html')
