@@ -57,22 +57,18 @@ def product():
 	
 @app.route('/update/<int:Sn>', methods=['GET', 'POST'])
 def update(Sn):
+    todo = Loveson.query.filter_by(Sn=Sn).first_or_404() # Using 404 handles missing items gracefully
     if request.method == 'POST':
-        title = request.form['title']
-        desc = request.form['desc']
-        todo = Loveson.query.filter_by(Sn=Sn).first()
-        todo.title = title
-        todo.desc = desc
-        db.session.add(todo)
-        db.session.commit()
+        todo.title = request.form['title']
+        todo.desc = request.form['desc']
+        db.session.commit() # Removed redundant db.session.add(todo)
         return redirect('/todo')
 		
-    todo = Loveson.query.filter_by(Sn=Sn).first()
     return render_template('update.html', todo=todo)
 	
 @app.route('/delete/<int:Sn>')
 def delete(Sn):
-    todo = Loveson.query.filter_by(Sn=Sn).first()
+    todo = Loveson.query.filter_by(Sn=Sn).first_or_404()
     db.session.delete(todo)
     db.session.commit()
     return redirect('/todo')
@@ -80,7 +76,7 @@ def delete(Sn):
     
 @app.route('/task')
 def task():
-	return  render_template('Task.html')
+	return render_template('Task.html')
 
 @app.route("/attendance")
 def center():
