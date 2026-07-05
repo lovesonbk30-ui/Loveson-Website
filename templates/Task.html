@@ -1,0 +1,297 @@
+{% extends 'Base.html' %}
+{% block body %}
+<style>
+/* Background */
+
+/* ===== Dynamic Animated Background ===== */
+
+body{
+    margin:0;
+    min-height:100vh;
+    overflow-x:hidden;
+    color:white;
+    font-family:'Inter',sans-serif;
+    background:linear-gradient(-45deg,
+    #0f172a,
+    #1e293b,
+    #312e81,
+    #581c87,
+    #0f172a);
+    background-size:500% 500%;
+    animation:bgGradient 18s ease infinite;
+    position:relative;
+}
+
+/* Animated Gradient */
+
+@keyframes bgGradient{
+
+0%{
+background-position:0% 50%;
+}
+
+50%{
+background-position:100% 50%;
+}
+
+100%{
+background-position:0% 50%;
+}
+
+}
+
+/* Floating Glow */
+
+body::before,
+body::after{
+    content:"";
+    position:fixed;
+    width:450px;
+    height:450px;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:.35;
+    z-index:-1;
+    animation:floatGlow 12s ease-in-out infinite alternate;
+}
+
+body::before{
+    background:#6366f1;
+    top:-120px;
+    left:-120px;
+}
+
+body::after{
+    background:#a855f7;
+    bottom:-120px;
+    right:-120px;
+    animation-delay:5s;
+}
+
+/* Third Glow */
+
+.hero::before{
+    content:"";
+    position:absolute;
+    width:300px;
+    height:300px;
+    border-radius:50%;
+    background:#06b6d4;
+    filter:blur(90px);
+    opacity:.25;
+    right:15%;
+    top:10%;
+    z-index:-1;
+    animation:floatGlow2 10s ease-in-out infinite;
+}
+
+@keyframes floatGlow{
+
+0%{
+transform:translate(0,0) scale(1);
+}
+
+100%{
+transform:translate(80px,60px) scale(1.25);
+}
+
+}
+
+@keyframes floatGlow2{
+
+0%,100%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(80px);
+}
+
+}
+
+/* Hero */
+
+.hero{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:75vh;
+    padding:40px 20px;
+    text-align:center;
+}
+
+.hero-content{
+    max-width:900px;
+}
+
+.badge{
+    display:inline-block;
+    padding:10px 22px;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:50px;
+    backdrop-filter:blur(10px);
+    margin-bottom:25px;
+}
+
+.hero h1{
+    font-size:65px;
+    margin:0;
+    line-height:1.15;
+}
+
+.hero h1 span{
+    background:linear-gradient(90deg,#6366f1,#a855f7,#06b6d4);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.hero p{
+    margin:30px auto;
+    color:#d1d5db;
+    font-size:20px;
+    max-width:650px;
+}
+
+.hero-btns{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.btn1,
+.btn2{
+    text-decoration:none;
+    color:white;
+    padding:15px 35px;
+    border-radius:50px;
+    font-weight:700;
+    transition:.35s;
+}
+
+.btn1{
+    background:linear-gradient(135deg,#6366f1,#9333ea);
+    box-shadow:0 15px 35px rgba(99,102,241,.4);
+}
+
+.btn2{
+    border:2px solid white;
+}
+
+.btn1:hover,
+.btn2:hover{
+    transform:translateY(-6px);
+}
+
+/* Cards */
+
+.cards{
+    max-width:1200px;
+    margin:40px auto 80px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:30px;
+    padding:20px;
+}
+
+.card{
+    text-decoration:none;
+    color:white;
+    padding:35px;
+    border-radius:25px;
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.15);
+    transition:.4s;
+}
+
+.card:hover{
+background: yellow;
+color: darkred;
+    transform:translateY(-12px);
+    box-shadow:0 20px 45px rgba(99,102,241,.35);
+}
+.card:hover p{
+
+color: blue;
+
+}
+
+.icon{
+    font-size:55px;
+}
+
+.card h2{
+    margin:20px 0 10px;
+}
+
+.card p{
+    color:#d1d5db;
+    line-height:1.6;
+}
+
+@media(max-width:768px){
+
+.hero h1{
+font-size:42px;
+}
+
+.hero p{
+font-size:17px;
+}
+
+.hero{
+min-height:60vh;
+}
+
+}
+</style>
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="badge">✨ Productivity Dashboard</span>
+
+        <h1>
+            Welcome to
+            <span>Loveson Task Page</span>
+        </h1>
+
+        <p>
+            Manage your daily tasks, attendance, quizzes and
+            boost your productivity with a beautiful dashboard.
+        </p>
+
+        <div class="hero-btns">
+            <a href="/task" class="btn1">🚀 Start Now</a>
+            <a href="/fun" class="btn2">🎯 Play Quiz</a>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="cards">
+
+    <a href="/todo" class="card">
+        <div class="icon">📝</div>
+        <h2>ToDo</h2>
+        <p>Create and organize your daily work.</p>
+    </a>
+
+    <a href="/attendance" class="card">
+        <div class="icon">📅</div>
+        <h2>Attendance</h2>
+        <p>Save and manage attendance easily.</p>
+    </a>
+
+    <a href="/quiz" class="card">
+        <div class="icon">🎓</div>
+        <h2>Quiz Game</h2>
+        <p>Learn while having fun.</p>
+    </a>
+
+</section>
+
+{% endblock body %}
