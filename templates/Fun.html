@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block body %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Python Flask Quiz</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial,sans-serif;
+        }
+
+        body{
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:linear-gradient(135deg,#4facfe,#00f2fe);
+        }
+
+        .card{
+            width:90%;
+            max-width:650px;
+            background:white;
+            padding:30px;
+            border-radius:20px;
+            box-shadow:0 10px 30px rgba(0,0,0,.25);
+        }
+
+        h1{
+            text-align:center;
+            color:#333;
+            margin-bottom:20px;
+        }
+
+        h2{
+            margin-bottom:20px;
+            color:#222;
+        }
+
+        .option{
+            display:block;
+            width:100%;
+            margin:10px 0;
+            padding:14px;
+            border:2px solid #ddd;
+            border-radius:10px;
+            cursor:pointer;
+        }
+
+        .option:hover{
+            background:#f2f2f2;
+        }
+
+        button{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:10px;
+            background:#2196F3;
+            color:white;
+            font-size:17px;
+            cursor:pointer;
+            margin-top:15px;
+        }
+
+        button:hover{
+            background:#1976D2;
+        }
+
+        .score{
+            text-align:center;
+            font-size:28px;
+            color:#333;
+
+
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+{% if finished %}
+
+    <h1>🎉 Quiz Completed</h1>
+
+    <div class="score">
+        Your Score:<br><br>
+        <b>{{ score }} / {{ total }}</b>
+    </div>
+
+    <form action="/restart" method="post">
+        <button type="submit">Play Again</button>
+    </form>
+
+{% else %}
+
+    <h1>🎯 Quiz Game</h1>
+
+    <h2>
+        Question {{ qno + 1 }} of {{ total }}
+        <br><br>
+        {{ question.question }}
+    </h2>
+
+    <form method="post">
+
+        {% for option in question.options %}
+        <label class="option">
+            <input type="radio"
+                   name="answer"
+                   value="{{ option }}"
+                   required>
+            {{ option }}
+        </label>
+        {% endfor %}
+
+        <button type="submit">Next Question</button>
+
+    </form>
+
+{% endif %}
+
+</div>
+
+{% endblock body %}
