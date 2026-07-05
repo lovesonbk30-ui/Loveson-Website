@@ -391,47 +391,42 @@
 }
 
 
+.btn-done {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 50px; /* Elegant capsule shape */
+    font-family: 'Inter', sans-serif;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Micro-interaction on click/active */
+.btn-done:active {
+    transform: scale(0.96);
+}
+.btn-success {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.btn-success:hover {
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+}
+
     </style>
 </head>
 <body>
 
 
-<nav class="navbar">
-
-    <div class="nav-logo">
-        <a href="/">
-            <img src="{{ url_for('static', filename='logo.jpg') }}" class="logo-img" alt="Logo">
-            <span>Loveson BK</span>
-        </a>
-    </div>
-
-    <ul class="nav-links">
-        <li><a href="/" class="active">Home</a></li>
-        <li><a href="/todo">ToDo</a></li>
-        <li><a href="/attendance">Attendance</a></li>
-        <li><a href="/show"> show</a></li>
-    </ul>
-
-    <div class="nav-button">
- <div class="search-box">
-    <form action="/todo" method="GET">
-        <input
-            type="text"
-            name="search"
-            placeholder="🔍 Search tasks..."
-            class="search-input">
-
-        <button type="submit" class="search-btn">
-            Search
-        </button>
-    </form>
-</div>
-    </form>
-  </div>
-</nav>
-    </div>
-
-</nav>
     
 
 
@@ -503,7 +498,7 @@
     
     </tbody>
 </table>
-
+<a href="/task" class="btn-done btn-success">Done</a>
 
   {% endblock body %}
 
