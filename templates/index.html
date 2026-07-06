@@ -1,0 +1,1087 @@
+{% extends 'Base.html' %}
+{% block body %}
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    padding: 0;
+    text-align: center;
+    background-image: url("{{ url_for('static', filename='Index_bg.jpg') }}");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+    background-size: cover;
+  }
+  
+  /* Layout adjustments */
+  .whole {
+    min-height: 85vh;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Animations */
+  @keyframes pageLoad {
+    0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .full-content * {
+    opacity: 0;
+    animation: fadeUp 2s ease forwards;
+  }
+
+  .full-content *:nth-child(1) { animation-delay: 0.2s; }
+  .full-content *:nth-child(2) { animation-delay: 0.5s; }
+  .full-content *:nth-child(3) { animation-delay: 0.8s; }
+
+  /* Navbar Container Styling */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a2e;
+    padding: 15px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    gap: 15px;
+  }
+
+  .nav-logo a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .logo-img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #00adb5;
+    transition: all .5s ease;
+    box-shadow: 0 0 15px rgba(0,173,181,.5);
+  }
+
+  .logo-img:hover {
+    transform: rotate(360deg) scale(1.15);
+  }
+
+  .nav-logo span {
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+  }
+
+  .nav-links a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: #00adb5;
+  }
+
+  /* Search box */
+  .search-box form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .search-input {
+    width: 140px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 30px;
+    outline: none;
+    font-size: 15px;
+    background: white;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    transition: 0.3s width ease;
+  }
+
+  .search-input:focus {
+    width: 240px;
+    box-shadow: 0 0 15px rgba(0,173,181,.5);
+  }
+
+  .search-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 30px;
+    background: #00adb5;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .search-btn:hover {
+    background: #008891;
+  }
+
+  /* Main Intro Containers */
+  .container {
+    max-width: 630px;
+    width: 100%;
+    margin: 40px auto;
+    background: white;
+    padding: 30px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    animation: fadeInUp 1s ease-out forwards;
+  }
+
+  h1 { 
+    color: #333;
+    font-size: clamp(1.6rem, 5vw, 2.2rem); 
+  }
+  
+  .container p { 
+    color: #666; 
+    font-size: clamp(1.1rem, 3vw, 1.5rem); 
+    margin-top: 15px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .btn:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+  }
+
+  /* Dynamic Typography Section */
+  .info {
+    text-align: center;
+    color: white;
+    margin: 40px auto;
+    width: 100%;
+    max-width: 90%;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .slogan {
+     color: #61FFE7;
+  }
+
+  .typing {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #FFF305;
+    text-decoration: none;
+    border-right: 4px solid #38bdf8;
+    width: 0;
+    animation:
+        typing 4s steps(18,end) forwards,
+        blink 0.7s infinite;
+  }
+
+  @keyframes typing { from { width: 0; } to { width: 18ch; } }
+  @keyframes blink { 50% { border-color: transparent; } }
+
+  /* Motivation Banner */
+  .motivate {
+    position: relative;
+    padding: 15px 20px;
+    margin: 30px auto 0 auto;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    cursor: pointer;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientShift 12s ease infinite;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s ease;
+  }
+
+  .motivate * {
+    opacity: 0;
+    animation: fadeUp 2s ease forwards;
+  }
+  .motivate *:nth-child(1) { animation-delay: 0.2s; }
+
+  .motivate:hover {
+    transform: scale(1.06) translateY(-4px);
+    box-shadow: 0 20px 50px rgba(231, 60, 126, 0.4), 0 0 30px rgba(35, 166, 213, 0.3);
+  }
+
+  .motivate .a {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(1.1rem, 4vw, 1.8rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    text-transform: uppercase;
+    display: inline-block;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: letter-spacing 0.4s ease, filter 0.3s ease;
+  }
+
+  .motivate:hover .a {
+    letter-spacing: 1px;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Join Community Box */
+  .box {
+    max-width: 550px;
+    width: 100%;
+    margin: 40px auto;
+    padding: 25px 20px;
+    background: linear-gradient(135deg, #141e30, #243b55);
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,.35);
+    animation: slideUp 1s ease;
+  }
+
+  .box::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,.12), transparent);
+    transform: rotate(25deg);
+    animation: shine 6s linear infinite;
+  }
+
+  .about {
+    position: relative;
+    z-index: 2;
+    display: block;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .about-btn {
+    position: relative;
+    z-index: 2;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    padding: 14px 35px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #ff512f, #dd2476);
+    box-shadow: 0 10px 25px rgba(221,36,118,.4);
+    transition: .4s ease;
+    display: inline-block;
+  }
+
+  .about-btn:hover {
+     background: #008891;
+     transform: translateY(-2px);
+     box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+  }
+
+  @keyframes shine { 
+    0% { transform: translateX(-100%) rotate(25deg); } 
+    100% { transform: translateX(100%) rotate(25deg); } 
+  }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Creator Profile Card */
+  .creator-card {
+    max-width: 700px;
+    width: 90%;
+    margin: 40px auto;
+    background: linear-gradient(145deg, #111827, #0f172a);
+    padding: clamp(20px, 5vw, 32px);
+    border-radius: 20px;
+    border: 1px solid rgba(56, 189, 248, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: left;
+  }
+
+  .creator-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.15);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .CT {
+    font-family: 'Inter', sans-serif;
+    color: #94a3b8;
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .CN {
+    font-family: 'Fira Code', monospace;
+    color: #38bdf8;
+    font-size: clamp(1.4rem, 5vw, 2.2rem);
+    font-weight: 600;
+    text-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    transition: color 0.3s ease;
+  }
+
+  .creator-card:hover .CN {
+    color: #a7f3d0;
+    text-shadow: 0 0 12px rgba(167, 243, 208, 0.4);
+  }
+
+  .creator-desc {
+    font-family: 'Inter', sans-serif;
+    color: #cbd5e1;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    border-left: 3px solid #3b82f6;
+    padding-left: 16px;
+    margin-top: 5px;
+    transition: border-color 0.4s ease;
+  }
+
+  .creator-card:hover .creator-desc {
+    border-color: #10b981;
+  }
+
+  /* Scroller Info Container */
+  .info-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #0f172a;
+    border-radius: 10px;
+    height: 70px;
+    max-width: 500px;
+    width: 90%;
+    margin: 30px auto;
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    font-weight: bold;
+    color: white;
+    padding: 0 15px;
+  }
+
+  .scroller {
+    height: 60px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .scroller span {
+    display: block;
+    height: 60px;
+    line-height: 60px;
+    color: #ff7f50;
+    animation: slide 8s infinite;
+  }
+
+  @keyframes slide {
+    0%,20% { transform: translateY(0); }
+    25%,45% { transform: translateY(-60px); }
+    50%,70% { transform: translateY(-120px); }
+    75%,95% { transform: translateY(-180px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* Aim Section Cards */
+  .desc {
+    max-width: 1300px;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    background: #FCE7E3;
+    border-radius: 12px;
+    padding: 25px 20px;
+    margin: 40px auto;
+    text-align: center;
+  }
+
+  .aim-header {
+    margin-bottom: 24px;
+  }
+
+  .s-aim {
+    display: inline-flex;
+    align-items: center;
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 1.3rem;
+  }
+
+  .aim-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+
+  .card {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .card:hover {
+    background-color: #4f46e5;
+    transform: translate(8px, -4px);
+    box-shadow: -8px 12px 20px rgba(79, 70, 229, 0.15);
+  }
+
+  .card h2 {
+    color: #1e293b;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    transition: color 0.3s ease;
+    text-align: left;
+  }
+
+  .card:hover h2 { color: #ffffff; }
+
+  .card p {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    transition: color 0.3s ease;
+    text-align: left;
+  }
+
+  .card:hover p { color: #e0e7ff; }
+
+  /* Links wrapper grid structure */
+  .help-link {
+    max-width: 900px;
+    width: 90%;
+    margin: 40px auto;
+    padding: 30px 20px;
+    background: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.08);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    transition: .4s ease;
+  }
+
+  .help {
+    width: 100%;
+    text-align: center;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 10px;
+  }
+
+  .help-item {
+    background: #f8fafc;
+    color: #333;
+    border: 1px solid #d1d5db;
+    border-radius: 30px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+    text-decoration: none;
+  }
+
+  .help-item:hover {
+    background: #ED7E73;
+    color: white;
+    border-color: #2563eb;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(37,99,235,.25);
+  } 
+
+  .help-item:active {
+    transform: scale(.97);
+  }
+
+  .break {
+    width: 100%;
+    margin: 35px auto;
+    padding: 14px 20px;
+    background: #1E0E44;
+    color: #F5BB32;
+    font-size: clamp(1.1rem, 3vw, 20px);
+    font-weight: 700;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 25px rgba(54,209,220,.35);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: float 2.5s ease-in-out infinite;
+  }
+
+  .break::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,.35);
+    transform: skewX(-25deg);
+    animation: shine 3s linear infinite;
+  }
+
+  @keyframes shine { 100% { left: 160%; } }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+  .rule {
+    width: 100%;
+    padding: 20px 10px;
+    background: #192B03;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .rule button {
+    padding: 15px;
+    margin: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: clamp(1rem, 3vw, 20px);
+    transition: 0.2s transform;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .rule button:hover {
+    transform: translateY(-3px);
+  }
+
+  .rule button:active {
+    background: green;
+    transform: scale(.97);
+  }
+
+  /* Terms and Privacy Sections responsiveness */
+  .terms, .privacy {
+    max-width: 900px;
+    width: 95%;
+    margin: 20px auto;
+    padding: clamp(15px, 4vw, 25px);
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.15);
+    border: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+    line-height: 1.7;
+    color: #333;
+    text-align: left;
+  }
+
+  .terms h2, .privacy h2 {
+    text-align: center;
+    color: #1565C0;
+    font-size: clamp(1.3rem, 4vw, 25px);
+    margin-bottom: 25px;
+    border-bottom: 3px solid #1565C0;
+    padding-bottom: 10px;
+  }
+
+  .term-item, .policy-box {
+    background: #f8f9fa;
+    margin-bottom: 18px;
+    padding: clamp(12px, 3vw, 18px);
+    border-left: 6px solid #1565C0;
+    border-radius: 10px;
+    transition: .3s;
+  }
+
+  .term-item:hover, .policy-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,.12);
+  }
+
+  .term-item h3, .policy-box h3 {
+    margin-top: 0;
+    font-size: clamp(1.2rem, 3.5vw, 22px);
+    color: #1565C0;
+  }
+
+  .term-item p, .policy-box p {
+    margin: 8px 0;
+    color: darkred;
+    text-align: justify;
+  }
+
+  .term-item ul, .policy-box ul {
+    margin: 10px 0 0 20px;
+    padding-left: 5px;
+  }
+
+  .term-item li, .policy-box li {
+    margin: 8px 0;
+    color: #E08401;
+  }
+
+  /* Footer Styling */
+  .foot {
+    width: 100%;
+    padding: 40px 20px;
+    background: linear-gradient(135deg,#07132c,#0d2c52,#123d6d);
+    color: #fff;
+    text-align: left;
+    border-top: 4px solid #3cb5ff;
+    box-shadow: 0 -8px 35px rgba(0,0,0,.35);
+  }
+
+  .footer-content {
+    max-width: 800px;
+    margin: auto;
+  }
+
+  .footer-content h2 {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin-bottom: 20px;
+    color: #7de3ff;
+    letter-spacing: 1px;
+    text-shadow: 0 0 18px rgba(0,229,255,.6);
+    text-align: center;
+  }
+
+  .last {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #e8f7ff;
+    text-align: left;
+  }
+
+  .last span {
+    display: inline-block;
+    margin: 4px 2px;
+    padding: 4px 12px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, .12);
+    backdrop-filter: blur(8px);
+    transition: .4s;
+  }
+
+  .last span:hover {
+    background: #00b7ff;
+    color: #fff;
+    transform: translateY(-3px);
+  }
+
+  .footer-line {
+    width: 120px;
+    height: 4px;
+    background: #00d4ff;
+    margin: 30px auto;
+    border-radius: 30px;
+    box-shadow: 0 0 20px #00d4ff;
+  }
+
+  .copyright {
+    color: #b7dfff;
+    font-size: 0.9rem;
+    text-align: center;
+    letter-spacing: .6px;
+  }
+
+  /* 📱 Device BREAKPOINTS */
+  @media screen and (max-width: 900px) {
+    .navbar {
+      padding: 15px 20px;
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .nav-links {
+      width: 100%;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .nav-button {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-input {
+      width: 180px;
+    }
+    
+    .search-input:focus {
+      width: 220px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .nav-links {
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      font-size: 16px;
+    }
+
+    .search-input {
+      width: 140px;
+    }
+
+    .search-input:focus {
+      width: 180px;
+    }
+
+    .help-item {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-logo">
+        <a href="/">
+            <img src="{{ url_for('static', filename='logo.jpg') }}" class="logo-img" alt="Logo">
+            <span>Loveson BK</span>
+        </a>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="/" class="active">Home</a></li>
+        <li><a href="/task">Task</a></li>
+        <li><a href="/">Arts</a></li>
+        <li><a href="/contact">About</a></li>
+    </ul>
+
+    <div class="nav-button">
+        <div class="search-box">
+            <form action="/" method="GET">
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="🔍 Search tasks..."
+                    class="search-input">
+                <button type="submit" class="search-btn">
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class='whole'>
+    <div class='full-content'>
+        <div class="container">
+            <h1>👏Welcome To Loveson Site</h1>
+            <p>✅This site is easy to use and provide controlled guidance👥.</p>
+            <a href="#main-content" class="btn">Explore Site</a>
+        </div>
+    </div>
+    
+    <div class='info'>
+        <h2>
+            The Age <br>
+            <div class='slogan'> 
+                Of <br>
+                <span class="typing">Modern Technology</span>
+            </div>
+            <div class='motivate'>
+                <span class='a'>Get inspired by yourself</span>
+            </div>
+        </h2>
+    </div>
+
+    <div class="box">
+        <span class="about">
+            🚀 Discover more features, updates, and opportunities by joining our community.
+        </span>
+        <a href='/contact' class="about-btn">
+            👥 Join Us
+        </a>
+    </div>
+</div>
+
+<section id='main-content'>
+    <div class="break">
+        ✨ See Details Below ✨
+    </div>
+</section>
+    <div class="creator-card">
+      <div class="card-header">
+        <div class="CT">Identity Creator:</div>
+        <div class="CN">"Loveson Bk"</div>
+      </div>
+      <div class="creator-desc">
+        Python Developer 🎓️ specializing in Flask web applications,
+        database management ♻️, and modern user interfaces. Passionate
+        about building efficient, scalable, and user-friendly solutions 💻️.
+      </div>
+    </div>
+
+    <div class="info-container">
+        <span>I am a</span>
+        <div class="scroller">
+            <span>Coder.</span>
+            <span>Student.</span>
+            <span>Developer.</span>
+            <span>Learner.</span>
+        </div>
+    </div>
+    
+    <div class='desc'>
+      <div class='aim-header'>
+        <span class='s-aim'>🎯 Aim</span>
+      </div>
+      
+      <div class='aim-container'>
+        <div class='card'>
+          <h2>💻️Work usage</h2>
+          <p>This site helps all individuals to make their work faster & easier.</p>
+        </div>
+        
+        <div class='card'>
+          <h2>🔅Help to build website</h2>
+          <p>This site also mentors the visitors who are interested in web development.</p>
+        </div>
+        
+        <div class='card'>
+          <h2>📒Providing needed materials</h2> 
+          <p>This site also provides virtual attendance service so that anyone can manage their records.</p>
+        </div>
+        
+        <div class='card'>
+          <h2>💠Getting review & guiding</h2>
+          <p>We kindly accept the reviews of visitors and guide them if needed.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="help-link">
+        <p class="help">📎 Check this out</p>
+        <a href="/quiz" class="help-item">⚜️ Quiz Game</a>
+        <a href="/attendance" class="help-item">💾 Attendance Site</a>
+        <a href="/coding-guide" class="help-item">💻 Coding Guide</a>
+        <a href="/art-craft" class="help-item">🖌️ Art & Craft</a>
+    </div>
+
+    <div class="rule">
+        <!-- Flexbox row container for horizontal button alignment -->
+        <div style="display: flex; flex-direction: row; justify-content: center; gap: 15px; flex-wrap: wrap; width: 100%;">
+            <button onclick="Show('terms')">📝Terms & Conditions</button>
+            <button onclick="Show('privacy')">🔒 Privacy Policy</button>
+        </div>
+
+        <div id="terms" class="terms" style="display:none;">
+            <h2>Terms & Conditions</h2>
+            <div class="term-item">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By using this website, you agree to these Terms & Conditions. If you do not agree, please discontinue use of the website.</p>
+            </div>
+            <div class="term-item">
+                <h3>2. Purpose of the Website</h3>
+                <p>This website provides educational resources, attendance management, quizzes, and other learning-related services.</p>
+            </div>
+            <div class="term-item">
+                <h3>3. User Responsibilities</h3>
+                <ul>
+                    <li>♻️Provide accurate information where required.</li>
+                    <li>♻️Use the website only for lawful purposes.</li>
+                    <li>♻️Respect other users.</li>
+                    <li>♻️Do not hack, damage, or misuse the website.</li>
+                </ul>
+            </div>
+            <div class="term-item">
+                <h3>4. Intellectual Property</h3>
+                <p>All website content, including text, graphics, logos, and source code, belongs to the website owner unless otherwise stated.</p>
+            </div>
+            <div class="term-item">
+                <h3>5. User Content</h3>
+                <p>Users are responsible for submitted content. Inappropriate or unlawful content may be removed.</p>
+            </div>
+            <div class="term-item">
+                <h3>6. Limitation of Liability</h3>
+                <p>This website is provided "as is" without warranties. We are not responsible for damages arising from the use of this website.</p>
+            </div>
+            <div class="term-item">
+                <h3>7. External Links</h3>
+                <p>We are not responsible for the content or privacy practices of third-party websites.</p>
+            </div>
+            <div class="term-item">
+                <h3>8. Changes to the Terms</h3>
+                <p>These Terms may be updated at any time. Continued use of the website means you accept the revised Terms.</p>
+            </div>
+            <div class="term-item">
+                <h3>9. Contact</h3>
+                <p>For any questions regarding these Terms & Conditions, please contact the website administrator.</p>
+            </div>
+        </div>
+
+        <div id='privacy' style='display:none;' class='privacy'>
+            <h2>Privacy Policy</h2>
+            <div class="policy-box">
+                <h3>1. Information We Collect</h3>
+                <ul>
+                    <li>👤 Name</li>
+                    <li>📧 Email Address</li>
+                    <li>📋 Attendance Records</li>
+                    <li>💬 Contact Form Messages</li>
+                    <li>🎯 Quiz Results</li>
+                    <li>🌐 Browser & IP Information</li>
+                </ul>
+            </div>
+            <div class="policy-box">
+                <h3>2. How We Use Your Information</h3>
+                <ul>
+                    <li>✅Provide attendance services.</li>
+                    <li>✅Improve website functionality.</li>
+                    <li>✅Respond to user inquiries.</li>
+                    <li>✅Maintain website security.</li>
+                    <li>✅Improve the learning experience.</li>
+                </ul>
+            </div>
+            <div class="policy-box">
+                <h3>3. Data Security</h3>
+                <p>We use reasonable security measures to protect your information. However, no online system can guarantee complete security.</p>
+            </div>
+            <div class="policy-box">
+                <h3>4. Cookies</h3>
+                <p>We may use cookies to improve your browsing experience. You can disable cookies in your browser settings.</p>
+            </div>
+            <div class="policy-box">
+                <h3>5. Information Sharing</h3>
+                <p>We never sell or rent your personal information. Information may only be shared when required by law.</p>
+            </div>
+            <div class="policy-box">
+                <h3>6. Children's Privacy</h3>
+                <p>This website is intended for educational purposes. Children should use the website under parental or school supervision.</p>
+            </div>
+            <div class="policy-box">
+                <h3>7. Changes to This Policy</h3>
+                <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page.</p>
+            </div>
+            <div class="policy-box">
+                <h3>8. Contact Us</h3>
+                <p>If you have any questions regarding this Privacy Policy, please contact the website administrator.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="foot">
+        <div class="footer-content">
+            <h2>🌟 Loveson Site Info</h2>
+            <div class="last">
+                This is a friendly and free-to-use website designed to make
+                learning and daily tasks easier.
+                <br><br>
+                It focuses on essential clerical functions such as
+                <span>Attendance Management</span>,
+                <span>Quiz System</span>,
+                and other educational tools.
+                <br><br>
+                Our platform combines <b>fun</b>, <b>knowledge</b>, and <b>technology</b> to provide an effective learning experience.
+            </div>
+            <div class="footer-line"></div>
+            <p class="copyright">
+                © 2026 Loveson Website • All Rights Reserved
+            </p>
+        </div>
+    </footer>
+
+
+<script>
+function Show(id){
+    document.getElementById("privacy").style.display = "none";
+    document.getElementById("terms").style.display = "none";
+    document.getElementById(id).style.display = "block";
+}
+</script>
+</body>
+{% endblock body %}

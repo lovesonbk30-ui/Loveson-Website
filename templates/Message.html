@@ -1,0 +1,163 @@
+{% extends 'Base.html' %}
+
+{% block body %}
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#74ebd5,#9face6);
+    margin:0;
+    padding:30px;
+}
+
+.table-container {
+    max-width:1000px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
+    overflow-x:auto;
+}
+
+h2 {
+    text-align:center;
+    color:#333;
+    font-size: 3rem;
+    margin-bottom:20px;
+}
+/* Container to handle responsive scrolling if needed */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+/* Base Table Styling */
+.message-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: left;
+}
+
+/* Header Styling */
+.message-table th {
+    background-color: #4f46e5; /* Modern Indigo */
+    color: #ffffff;
+    padding: 14px 18px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+/* Row & Cell Styling */
+.message-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+}
+
+/* Zebra striping & Hover effect */
+.message-table tbody tr:nth-child(even) {
+    background-color: #fcfcfd;
+}
+
+.message-table tbody tr:hover {
+    background-color: #f4f4ff; /* Soft tint on hover */
+    transition: background-color 0.2s ease;
+}
+
+/* Sender Column Typography */
+.sender-info {
+    width: 25%;
+}
+
+.sender-name {
+    display: block;
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.95rem;
+}
+
+.sender-email {
+    display: block;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+/* Message Column Typography */
+.message-body{
+    width: 75%;
+}
+
+.message-subject {
+    font-weight: 600;
+    color: #111827;
+    font-size: 1rem;
+    margin-bottom: 6px;
+}
+
+.message-body {
+    color: #4b5563;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+
+.edit { background:#2196F3; }
+.edit:hover { background:#0b7dda; }
+.delete { background:#f44336; }
+.delete:hover { background:#d32f2f; }
+
+
+</style>
+
+<div class="table-container">
+    <h2>📋 Message Records</h2>
+
+            {% for message in messages %}
+
+  
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="table-container">
+    <table class="message-table">
+        <thead>
+            <tr>
+                <th>Sender</th>
+                <th>Subject </th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for msg in Loveson_Messages %}
+            <tr>
+                <td class="sender-info">
+                    <span class="sender-name">{{ msg[1] }}</span>
+                    <span class="sender-email">{{ msg[2] }}</span>
+                </td>
+                <td class="message-content">
+                    <div class="message-subject">{{ msg[3] }}</div>
+                    </td>
+                    <td>
+                    
+                    <p class="message-body">{{ msg[4] }}</p>
+                </td>
+            </tr>
+                      {% else %}
+            <tr>
+                <td colspan="6">No messages found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock body %}
