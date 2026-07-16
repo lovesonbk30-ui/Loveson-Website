@@ -16,6 +16,12 @@ app.secret_key = 'your_super_secret_session_key'
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 MESSAGES_DB = os.path.join(BASE_DIR, 'Loveson_Messages.db')
 
+
+# This pulls the URL directly from what you just pasted into Render
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+# Pass 'DATABASE_URL' into SQLAlchemy, Tortoise, or your psycopg2 connect function!
+
 # Database for messages using raw sqlite3
 def init_db():
     # 2. Use the absolute path here
