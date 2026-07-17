@@ -12,10 +12,17 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///Loveson.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.secret_key = 'your_super_secret_session_key'
 
-# 1. Define an absolute path for the messages database
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-MESSAGES_DB = os.path.join(BASE_DIR, 'Loveson_Messages.db')
+# 1
 
+db_url = os.environ.get("DATABASE_URL")
+
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://postgresql://db_loveson2_0_user:2miAGK2Uy3CJeIOxgop2xxKE4EzDSpLp@dpg-d9cv9hm7r5hc739drns0-a.ohio-postgres.render.com/db_loveson2_0", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
 
 # This pulls the URL directly from what you just pasted into Render
 DATABASE_URL = os.environ.get("DATABASE_URL")
