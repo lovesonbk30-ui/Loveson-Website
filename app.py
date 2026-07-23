@@ -8,10 +8,15 @@ app = Flask(__name__)
 app.secret_key = "your_super_secret_session_key"
 
 # 1. Main Database (Stores central authentication/users)
-db_url = os.environ.get("DATABASE_URL")
+MAIN_DB_URL = os.environ.get("DATABASE_URL")
 
 if MAIN_DB_URL.startswith("postgres://"):
     MAIN_DB_URL = MAIN_DB_URL.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+    "pool_pre_ping": True,
+    "pool_recycle": 300,
+}
 
 app.config["SQLALCHEMY_DATABASE_URI"] = MAIN_DB_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
