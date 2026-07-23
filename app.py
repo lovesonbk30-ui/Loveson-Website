@@ -8,7 +8,8 @@ app = Flask(__name__)
 app.secret_key = "your_super_secret_session_key"
 
 # 1. Main Database (Stores central authentication/users)
-MAIN_DB_URL = os.environ.get("DATABASE_URL", "sqlite:///main_auth.db")
+db_url = os.environ.get("DATABASE_URL")
+
 if MAIN_DB_URL.startswith("postgres://"):
     MAIN_DB_URL = MAIN_DB_URL.replace("postgres://", "postgresql://", 1)
 
