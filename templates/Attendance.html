@@ -1,271 +1,447 @@
 {% extends 'Base.html' %}
-      {% block body %}
+{% block body %}
 <title>Attendance System</title>
 <style>
-       body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-background-image: url("{{ url_for('static', filename='Attendance_bg.jpg') }}");
-
-background-repeat: no-repeat;
-background-position: center;
-background-attachment: fixed;
-background-size: cover;
-
-}
-.container{
-    max-width: 800px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px gray;
-    
-}
-h1, h2, h3{
-    text-align: center;
-    color: #333;
-}
-input[type="text"], select{
-    padding: 10px;
-    width: 70%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-select {
-    width: 50%;
-    margin-right: 10px;
-}
-button{
-    padding: 10px 20px;
-    background: orange;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-button:hover {
-    background: darkorange;
-}
-table{
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-th, td{
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-    color: #333;
-}
-th{
-    background: Black;
-    color: white;
-}
-.status-present{
-    color: green;
-    font-weight: bold;
-}
-.status-absent{
-    color: red;
-    font-weight: bold;
-}
-.summary-container {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-.card {
-    background: #fcfcfc;
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 6px;
-    text-align: center;
-    width: 28%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-.card h3 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-    color: #666;
-    text-transform: uppercase;
-}
-.card p {
-    margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-}
-.filter-box {
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 6px;
-    border: 1px dashed #ccc;
-    text-align: center;
-    margin-bottom: 20px;
-    
-
-
-  
-
-}
-
-.alert-btn{
-    width:60%;
-    padding:13px;
-    border:none;
-    border-radius:10px;
-    color:white;
-    font-size:15px;
-    text-align: center;
-    font-weight:bold;
-    cursor:pointer;
-    transition:0.3s;
-    background-color: #F34825;
+    * {
+        box-sizing: border-box;
     }
-    
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px 10px;
+        text-align: center;
+        background-image: url("{{ url_for('static', filename='Attendance_bg.jpg') }}");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+        background-size: cover;
+    }
+    .container {
+        width: 100%;
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px gray;
+    }
+    h1, h2, h3 {
+        text-align: center;
+        color: #333;
+    }
+    input[type="text"], select {
+        padding: 10px;
+        width: 70%;
+        max-width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    select {
+        width: 50%;
+        max-width: 100%;
+        margin-right: 10px;
+    }
+    button {
+        padding: 10px 20px;
+        background: orange;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: darkorange;
+    }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        min-width: 300px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        color: #333;
+    }
+    th {
+        background: Black;
+        color: white;
+    }
+    .status-present {
+        color: green;
+        font-weight: bold;
+    }
+    .status-absent {
+        color: red;
+        font-weight: bold;
+    }
+    .summary-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .card {
+        background: #fcfcfc;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+        width: 28%;
+        min-width: 180px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .card h3 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        color: #666;
+        text-transform: uppercase;
+    }
+    .card p {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+    .filter-box {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px dashed #ccc;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .alert-btn {
+        width: 60%;
+        max-width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 15px;
+        text-align: center;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        background-color: #F34825;
+    }
+    h1 {
+        margin: 0 0 10px 0;
+        font-size: 2.5rem;
+        letter-spacing: -1px;
+    }
+    p {
+        margin: 0;
+        color: #e2e8f0;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    .hero-background {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/static/Attendance_bg.jpg");
+        background-position: center;
+        background-size: cover;
+    }
+    .btn-save {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 38px;
+        margin: 20px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: .5px;
+        background: linear-gradient(135deg, #f59e0b, #facc15, #f97316);
+        border-radius: 60px;
+        border: none;
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 12px 30px rgba(245, 158, 11, .35), inset 0 1px 1px rgba(255, 255, 255, .35);
+        transition: .35s ease;
+    }
+    .btn-save span {
+        position: relative;
+        z-index: 2;
+    }
+    .btn-save::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -120%;
+        width: 60%;
+        height: 100%;
+        background: rgba(255, 255, 255, .35);
+        transform: skewX(-25deg);
+        transition: .8s;
+    }
+    .btn-save:hover::before {
+        left: 140%;
+    }
+    .btn-save:hover {
+        transform: translateY(-5px) scale(1.03);
+        box-shadow: 0 18px 40px rgba(245, 158, 11, .45);
+    }
+    .btn-save:active {
+        transform: scale(.97);
+        background: darkblue;
+    }
+    .top-buttons {
+        text-align: center;
+        margin: 20px 0 30px;
+    }
+    .btn-home {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 35px;
+        text-decoration: none;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 700;
+        border-radius: 50px;
+        background: linear-gradient(135deg, #2563eb, #3b82f6, #60a5fa);
+        box-shadow: 0 12px 30px rgba(37, 99, 235, .35);
+        transition: .35s;
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-home::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 60%;
+        height: 100%;
+        background: rgba(255, 255, 255, .3);
+        transform: skewX(-25deg);
+        transition: .8s;
+    }
+    .btn-home:hover::before {
+        left: 150%;
+    }
+    .btn-home:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 18px 40px rgba(37, 99, 235, .45);
+    }
+    .record {
+        margin: 30px auto;
+        width: 100%;
+    }
+    .all-record span {
+        border-radius: 10px;
+        padding: 8px;
+        font-size: 18px;
+        background: #322A2B;
+        color: white;
+        display: inline-block;
+    }
+    .btn-record {
+        padding: 4.5px 10px;
+        background: orange;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .btn-record:hover {
+        background: darkorange;
+    }
+    .flash-success {
+        color: grey;
+        margin: 10px;
+    }
 
-
-        h1 {
-            margin: 0 0 10px 0;
-            font-size: 2.5rem;
-            letter-spacing: -1px;
+    /* Device responsiveness rules */
+    @media(max-width: 768px) {
+        .container {
+            padding: 15px 10px;
         }
-
-        p {
-            margin: 0;
-            color: #e2e8f0;
-            font-size: 1.1rem;
-            line-height: 1.6;
+        input[type="text"], select {
+            width: 100%;
+            margin-bottom: 10px;
         }
-.hero-background {
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.5), rgll
-    url("/static/Attendance_bg.jpg");
-  background-position: center;
-  background-size: cover;
-}
-
-
+        select {
+            margin-right: 0;
+        }
+        .btn-save {
+            width: 100%;
+            max-width: 320px;
+            font-size: 16px;
+            padding: 15px 25px;
+        }
+        .card {
+            width: 100%;
+        }
+        .alert-btn {
+            width: 100%;
+        }
+    }
 </style>
-</head>
-<body>
-
 
 <div class="container">
-<h1>✨Attendance System ✨</h1>
+    <h1>✨Attendance System ✨</h1>
 
-<form action="/add_student" method="POST">
-    <input type="text" name="name" placeholder="Student Name" required>
-    <button type="submit">Add Student</button>
-</form>
-
-<h2>Students</h2>
-
-{% if students %}
-<form action="/mark" method="POST">
-<table>
-<tr>
-<th>Name</th>
-<th>Present</th>
-<th>Absent</th>
-</tr>
-
-{% for student in students %}
-<tr>
-<td>{{ student.name }}</td>
-<td><input type="radio" name="status_{{student.id}}" value="Present" checked></td>
-<td><input type="radio" name="status_{{student.id}}" value="Absent"></td>
-</tr>
-{% endfor %}
-
-</table>
-<br>
-<button type="submit" style="display:block; margin:auto;">Save Attendance</button>
-</form>
-{% else %}
-<button class='alert-btn' type="text">No students added yet.</button>
-{% endif %}
-
-<h2>📑Summary Stats</h2>
-<div class="summary-container">
-    <div class="card">
-        <h3>Total Days Marked</h3>
-        <p>{{ total_days }}</p>
-    </div>
-    <div class="card">
-        <h3>Total Presents</h3>
-        <p style="color: green;">{{ total_presents }}</p>
-    </div>
-    <div class="card">
-        <h3>Total Absents</h3>
-        <p style="color: red;">{{ total_absents }}</p>
-    </div>
-</div>
-
-<h2>📕Individual Student History</h2>
-<div class="filter-box">
-    <form action="/attendance" method="GET">
-        <select name="selected_student">
-            <option value="">-- Select a Student --</option>
-            {% for student in students %}
-                <option value="{{ student.name }}" {% if student.name == selected_student %}selected{% endif %}>
-                    {{ student.name }}
-                </option>
-            {% endfor %}
-        </select>
-        <button type="submit" style="background-color: #007BFF;">View History</button>
-        {% if selected_student %}
-            <a href="/" style="margin-left: 10px; color: #666; text-decoration: none;">Clear Filter</a>
-        {% endif %}
+    <form action="/add_student" method="POST">
+        <input type="text" name="name" placeholder="Student Name" required>
+        <button type="submit">Add Student</button>
     </form>
-</div>
 
-{% if selected_student %}
-    <h3>Showing Dates for: {{ selected_student }}</h3>
-    {% if student_records %}
-        <p style="text-align:center;">Attendance Rate: <strong>{{ attendance_rate }}%</strong></p>
+    <h2>Students</h2>
+
+    {% if students %}
+    <form action="/mark" method="POST">
+        <div class="table-wrapper">
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                </tr>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.name }}</td>
+                    <td><input type="radio" name="status_{{student.id}}" value="Present" checked></td>
+                    <td><input type="radio" name="status_{{student.id}}" value="Absent"></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <br>
+        <button type="submit" style="display:block; margin:auto;">Save Attendance</button>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </form>
+    {% else %}
+    <button class='alert-btn' type="button">No students added yet.</button>
+    {% endif %}
+
+    <h2>📑Summary Status</h2>
+    <div class="summary-container">
+        <div class="card">
+            <h3>Total Days Marked</h3>
+            <p>{{ total_days }}</p>
+        </div>
+        <div class="card">
+            <h3>Total Presents</h3>
+            <p style="color: green;">{{ total_presents }}</p>
+        </div>
+        <div class="card">
+            <h3>Total Absents</h3>
+            <p style="color: red;">{{ total_absents }}</p>
+        </div>
+    </div>
+
+    <h2>📕Individual Student History</h2>
+    <div class="filter-box">
+        <form action="/attendance" method="GET">
+            <select name="selected_student">
+                <option value="">-- Select a Student --</option>
+                {% for student in students %}
+                    <option value="{{ student.name }}" {% if student.name == selected_student %}selected{% endif %}>
+                        {{ student.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit" style="background-color: #007BFF;">View History</button>
+            {% if selected_student %}
+                <a href="/attendance" style="margin-left: 10px; color: #666; text-decoration: none;">Clear Filter</a>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if selected_student %}
+        <h3>Showing Dates for: {{ selected_student }}</h3>
+        {% if student_records %}
+            <p style="text-align:center;">Attendance Rate: <strong>{{ attendance_rate }}%</strong></p>
+            <div class="table-wrapper">
+                <table>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                    {% for record in student_records %}
+                    <tr>
+                        <td>{{ record.date }}</td>
+                        <td class="status-{{ record.status|lower }}">{{ record.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+            <div class="summary-container" style="margin-top: 20px;">
+                <div class="card">
+                    <h3>Individual Present</h3>
+                    <p style="color: green;">{{ student_presents }}</p>
+                </div>
+                <div class="card">
+                    <h3>Individual Absent</h3>
+                    <p style="color: red;">{{ student_absents }}</p>
+                </div>
+            </div>
+        {% else %}
+            <p style="text-align:center; color: #777;">No attendance records found for this student.</p>
+        {% endif %}
+    {% endif %}
+
+    <hr style="margin-top: 40px; border: 0; border-top: 1px solid #eee;">
+    
+    <div class='all-record'>
+        <h2>📌All Attendance Records</h2>
+        <div class='record'>
+            <span> 🌍️1st Session Record <button class='btn-record' onclick="toggleResult()"> view </button> </span> 
+        </div>
+    </div>
+
+    <div id='result' style="display:none;" class="table-wrapper">
         <table>
             <tr>
-                <th>Date</th>
+                <th>Name</th>
                 <th>Status</th>
+                <th>Date</th>
             </tr>
-            {% for record in student_records %}
+            {% for record in records %}
             <tr>
-                <td>{{ record.date }}</td>
+                <td>{{ record.student_name }}</td>
                 <td class="status-{{ record.status|lower }}">{{ record.status }}</td>
+                <td>{{ record.date }}</td>
             </tr>
             {% endfor %}
         </table>
-    {% else %}
-        <p style="text-align:center; color: #777;">No attendance records found for this student.</p>
-    {% endif %}
-{% endif %}
+    </div>
 
-<hr style="margin-top: 40px; border: 0; border-top: 1px solid #eee;">
-
-<h2>📌All Attendance Records</h2>
-
-<table>
-<tr>
-<th>Name</th>
-<th>Status</th>
-<th>Date</th>
-</tr>
-
-{% for record in records %}
-<tr>
-<td>{{ record.student_name }}</td>
-<td class="status-{{ record.status|lower }}">{{ record.status }}</td>
-<td>{{ record.date }}</td>
-</tr>
-{% endfor %}
-</table>
-
+    <div class="top-buttons">
+        <a href="/dashboard" class="btn-home">
+            🏠 Back to dashboard
+        </a>
+    </div>
 </div>
-  {% endblock body %}
 
+<script>
+function toggleResult() {
+    var res = document.getElementById('result');
+    if (res.style.display === "none" || res.style.display === "") {
+        res.style.display = "block";
+    } else {
+        res.style.display = "none";
+    }
+}
+</script>
+{% endblock body %}

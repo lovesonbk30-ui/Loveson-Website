@@ -1,0 +1,220 @@
+{% extends 'Base.html' %}
+{% block body %}
+<style>
+  /* Fixed broken nested tag, added fluid background animation */
+  body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.15) 0px, transparent 50%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  box-sizing: border-box;
+}
+/* Note: You can completely delete the @keyframes rule if you choose this one! */
+
+
+  /* Upgraded form container to a modern Glassmorphism look */
+  .form {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 450px;
+    margin: auto; /* Dynamically centers vertically and horizontally */
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .form:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .form h1 {
+    color: #2563eb;
+    font-size: 2rem;
+    margin-top: 0;
+    font-weight: 700;
+    border-bottom: 3px solid #5563c1;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .form p {
+    color: #555;
+    font-size: 15px;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .input-group {
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  /* Dynamic borders for active input states */
+  .input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .input-group input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    background: #ffffff;
+  }
+
+  .input-group input:focus + label {
+    color: #2563eb;
+  }
+
+  /* Interactive submit button */
+  .btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #5563c1 0%, #2563eb 100%);
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+
+  .btn-submit:hover {
+    background: linear-gradient(135deg, #4350ac 0%, #1d4ed8 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  }
+
+  .btn-submit:active {
+    transform: translateY(0);
+  }
+
+  .info {
+    font-size: 15px;
+    color: #666;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .info a {
+    text-decoration: none;
+    color: #2563eb;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+
+  .info a:hover {
+    color: #5563c1;
+    text-decoration: underline;
+  }
+
+  /* Modernized, layout-friendly fixed footer */
+  footer {
+    width: 100%;
+    text-align: center;
+    padding: 15px 20px;
+    background: rgba(58, 3, 28, 0.95);
+    box-sizing: border-box;
+    margin-top: auto;
+  }
+
+  .desc {
+    color: #4ade80;
+    font-weight: 600;
+  }
+
+  .designer-name {
+    color: #fb923c;
+    font-weight: 700;
+  }
+
+  footer p {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin: 5px 0 0 0;
+  }
+
+  .flash-success{
+  color: red;
+
+  
+  }
+</style>
+
+<div class="form">
+  <h1>📄Register Form</h1>
+  <p>Fill valid details to create an account.</p>
+
+  <form method="POST" action="/register">
+    <div class="input-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="Enter your username" required> 
+      <!--<select> 
+      <option value="role"> --Select Your Role-- </option>
+      <option value="role">Teacher </option>
+      <option value="role"> Students</option>
+      
+      </select> -->
+      </input>
+        {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash-success">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    </div>
+
+    <div class="input-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Enter your Email" required>
+    </div>
+    
+    <div class="input-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required>
+    </div>
+  <button type="submit" class="btn-submit">Register</button>
+    <p class="info"><a href="/">Learn more! </a>about Loveson Site </p>
+  </form>
+
+
+ 
+
+
+
+{% endblock body %}

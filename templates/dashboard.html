@@ -1,0 +1,280 @@
+{% extends 'Base.html' %}
+{% block body %}
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#f8fafc;
+    display:flex;
+    flex-direction:column;
+}
+
+/* Dashboard */
+.dashboard-container{
+    display:flex;
+    flex:1;
+    min-height:100vh;
+}
+
+/* Sidebar */
+
+.sidebar{
+    width:300px;
+    background:#10053D;
+    color:white;
+    padding:30px 20px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    box-shadow:5px 0 20px rgba(0,0,0,.15);
+}
+
+.sidebar-header{
+    font-size:28px;
+    font-weight:bold;
+    margin-bottom:35px;
+    text-align:center;
+    bottom-border: 2px solid green;
+    letter-spacing:1px;
+}
+
+.nav-links{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:white;
+    background:rgba(255,255,255,.15);
+    padding:15px;
+    border-radius:15px;
+    font-size:18px;
+    transition:.35s;
+    backdrop-filter:blur(8px);
+}
+
+.nav-links a:hover{
+    background:white;
+    color:#ff6600;
+    transform:translateX(8px);
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
+
+/* Main */
+
+.main-content{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+}
+
+/* Welcome Card */
+
+.welcome-card{
+    width:100%;
+    max-width:1000px;
+    background:white;
+    border-radius:25px;
+    padding:45px;
+    text-align:center;
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+    animation:fadeIn .8s ease;
+}
+
+.welcome-card h1{
+    color:#ff6600;
+    font-size:40px;
+    margin-bottom:15px;
+}
+
+.welcome-card p{
+    color:#555;
+    font-size:18px;
+    line-height:1.8;
+    margin-bottom:35px;
+}
+
+/* Button */
+
+.btn-logout{
+    display:inline-block;
+    text-decoration:none;
+    background:linear-gradient(90deg,#ff8c00,#ff5e00);
+    color:white;
+    padding:15px 40px;
+    border-radius:40px;
+    font-size:18px;
+    font-weight:bold;
+    transition:.3s;
+    box-shadow:0 8px 20px rgba(255,102,0,.3);
+}
+
+.btn-logout:hover{
+    transform:translateY(-4px);
+    box-shadow:0 15px 30px rgba(255,102,0,.45);
+}
+
+/* Footer */
+
+footer{
+    background:#222;
+    color:#eee;
+    text-align:center;
+    padding:18px;
+}
+
+.desc{
+    color:#bbb;
+}
+
+.designer-name{
+    color:#ff9800;
+    font-weight:bold;
+}
+
+/* Animation */
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* Tablet */
+
+@media(max-width:900px){
+
+.dashboard-container{
+    flex-direction:column;
+}
+
+.sidebar{
+    width:100%;
+    padding:20px;
+}
+
+.sidebar-header{
+    margin-bottom:20px;
+    
+}
+
+.nav-links{
+    gap:12px;
+}
+
+.nav-links a{
+    text-align:center;
+}
+
+.main-content{
+    padding:25px;
+}
+
+.welcome-card{
+    padding:30px;
+}
+
+.welcome-card h1{
+    font-size:30px;
+}
+
+}
+
+/* Mobile */
+
+@media(max-width:500px){
+
+.sidebar-header{
+    font-size:22px;
+}
+
+.nav-links a{
+    font-size:16px;
+    padding:13px;
+}
+
+.welcome-card h1{
+    font-size:26px;
+}
+
+.welcome-card p{
+    font-size:15px;
+}
+
+.btn-logout{
+    width:100%;
+    padding:14px;
+}
+.flash-success{
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: green;
+  text-align: center;
+  padding: 12px; border-radius: 8px;
+  font-size: 1rem; text-align: center;
+  margin: 2px;
+  margin-bottom: 24px;
+}
+
+
+</style>
+ 
+<div class="dashboard-container">
+
+  <aside class="sidebar">
+    <div>
+      <div class="sidebar-header">
+        ⚡ {{user}} Workspace
+      </div>
+      <nav class="nav-links">
+        <a href="/attendance">📕 Attendance Management</a>
+        <a href="/todo">✏️ ToDo List</a>
+        <a href="/lessons">🖥️ Coding Lessons</a>
+        <a href="/updates">🔍 Day to Day Update</a>
+      </nav>
+    </div>
+  </aside>
+<div class='flash'>
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+</div>
+  <main class="main-content">
+
+    <div class="welcome-card">
+      <h1>🎉 Welcome, {{user}}!</h1>
+      <p>Your workspace is ready. Manage and track your day-to-day productivity systematically  from your control center.</p>
+      <a href="/logout" class="btn-logout">Logout </a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <span class="desc">Designed By: </span>
+  <span class="designer-name">Loveson Bk</span>
+  <p>© Loveson Productivity Dashboard. All rights reserved.</p>
+</footer>
+{% endblock body %}
