@@ -10,29 +10,23 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # App & Database Configuration
 # --------------------------------------------------
 app = Flask(__name__)
-app.secret_key = "your_super_secret_session_key"
+app.secret_key = os.environ.get("SECRET_KEY", "your_super_secret_session_key")
 
-# Uses Render/Neon PostgreSQL if present, otherwise defaults to local SQLite
-
-import os
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+# Database setup (Uses DATABASE_URL or falls back to local SQLite)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///database.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
 # --------------------------------------------------
-# Database Models (Linked to Users via user_id)
+# Database Models
 # --------------------------------------------------
 class User(db.Model):
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True)
-    password = db.Column(db.Text, nullable=False)   # ✅ Fix
+    password = db.Column(db.Text, nullable=False)
 
 
 class Loveson(db.Model):
@@ -68,7 +62,8 @@ class Message(db.Model):
     subject = db.Column(db.String(200), nullable=False)
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # nullable=True allows guest users (not logged in) to send messages
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
 
 # Dynamic Helper to get current logged-in user
@@ -275,19 +270,20 @@ def mark():
     return redirect(url_for("center"))
 
 # ==================================================
-# CONTACT MESSAGES
-# ==================================================
-# ==================================================
-# CONTACT MESSAGES
+# CONTACT MESSAGES (Public Endpoint)
 # ==================================================
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
+        user = get_current_user()
+        
+        # Attach user_id if logged in, otherwise set to None
         msg = Message(
             name=request.form.get("name"),
             email=request.form.get("email"),
             subject=request.form.get("subject"),
-            message=request.form.get("message")
+            message=request.form.get("message"),
+            user_id=user.id if user else None
         )
 
         db.session.add(msg)
@@ -301,8 +297,14 @@ def contact():
 
 @app.route("/View_message")
 def view_message():
+    # Recommended: Restrict viewing messages to logged in users
+    user = get_current_user()
+    if not user:
+        return redirect(url_for('login'))
+
     messages = Message.query.order_by(Message.id.desc()).all()
     return render_template("Message.html", Loveson_Messages=messages)
+
 # ==================================================
 # QUIZ GAME & MISC
 # ==================================================
@@ -361,3 +363,4 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+
