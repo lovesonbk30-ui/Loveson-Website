@@ -14,10 +14,13 @@ app.secret_key = "your_super_secret_session_key"
 
 # Uses Render/Neon PostgreSQL if present, otherwise defaults to local SQLite
 
-if db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql://", 1)
+import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
-app.config["SQLALCHEMY_DATABASE_URI"] = db_url
+app = Flask(__name__)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
