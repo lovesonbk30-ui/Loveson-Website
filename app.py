@@ -1,46 +1,30 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import (
+    Flask, render_template, request, redirect, url_for, flash, session
+)
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# --------------------------------------------------
+# App & Database Configuration
+# --------------------------------------------------
 app = Flask(__name__)
 app.secret_key = "your_super_secret_session_key"
 
-# 1. Main Database (Stores central authentication/users)
-MAIN_DB_URL = os.environ.get("DATABASE_URL")
+# Uses Render/Neon PostgreSQL if present, otherwise defaults to local SQLite
+db_url = os.environ.get("DATABASE_URL", "sqlite:///app.db")
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
 
-if MAIN_DB_URL.startswith("postgres://"):
-    MAIN_DB_URL = MAIN_DB_URL.replace("postgres://", "postgresql://", 1)
-
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_pre_ping": True,
-    "pool_recycle": 300,
-}
-
-app.config["SQLALCHEMY_DATABASE_URI"] = MAIN_DB_URL
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# 2. Dynamic Routing Engine for Per-User Databases
-class DynamicSQLAlchemy(SQLAlchemy):
-    def choose_engine(self, bind=None):
-        """Routes models dynamically to the logged-in user's DB file."""
-        user_id = session.get('user_id')
-        if user_id:
-            # Connect to separate SQLite DB per user
-            user_db_path = f"sqlite:///user_db_{user_id}.db"
-            return self.get_engine(bind=user_db_path)
-        
-        # Fallback to main auth DB when unauthenticated
-        return self.get_engine(bind=None)
-
-db = DynamicSQLAlchemy(app)
+db = SQLAlchemy(app)
 
 # --------------------------------------------------
-# Database Models
+# Database Models (Linked to Users via user_id)
 # --------------------------------------------------
-
-# Central model stored in main_auth.db
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
@@ -48,18 +32,22 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=True)
     password = db.Column(db.String(120), nullable=False)
 
-# Isolated per-user models (No user_id required since DBs are separated)
+
 class Loveson(db.Model):
     __tablename__ = "todos"
     Sn = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     desc = db.Column(db.String(500), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
 
 class Student(db.Model):
     __tablename__ = "students"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
 
 class Attendance(db.Model):
     __tablename__ = "attendance"
@@ -67,6 +55,8 @@ class Attendance(db.Model):
     student_name = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String(20), nullable=False)
     date = db.Column(db.String(20), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
 
 class Message(db.Model):
     __tablename__ = "messages"
@@ -76,8 +66,10 @@ class Message(db.Model):
     subject = db.Column(db.String(200), nullable=False)
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
+# Dynamic Helper to get current logged-in user
 def get_current_user():
     user_id = session.get('user_id')
     return User.query.get(user_id) if user_id else None
@@ -119,7 +111,7 @@ def register():
         flash('Registration Successful! Please login.', 'success')
         return redirect(url_for('login'))
         
-    return render_template('Register.html')
+    return render_template('register.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -132,13 +124,10 @@ def login():
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['username'] = user.username
-            
-            # Ensures the user's isolated DB file and tables exist
-            db.create_all()
             flash('Login Successful!', 'success')
             return redirect(url_for('dashboard'))
             
-        flash('Invalid Credentials', 'danger')
+        flash('Invalid username or password', 'danger')
 
     return render_template('login.html')
 
@@ -169,12 +158,12 @@ def home():
         title = request.form.get("title")
         desc = request.form.get("desc")
         if title and desc:
-            db.session.add(Loveson(title=title, desc=desc))
+            db.session.add(Loveson(title=title, desc=desc, user_id=user.id))
             db.session.commit()
             flash("Task Added Successfully!", "success")
         return redirect(url_for("home"))
 
-    all_todo = Loveson.query.order_by(Loveson.Sn.desc()).all()
+    all_todo = Loveson.query.filter_by(user_id=user.id).order_by(Loveson.Sn.desc()).all()
     return render_template("ToDo.html", all_todo=all_todo)
 
 
@@ -184,7 +173,7 @@ def update(Sn):
     if not user:
         return redirect(url_for('login'))
 
-    todo = Loveson.query.filter_by(Sn=Sn).first_or_404()
+    todo = Loveson.query.filter_by(Sn=Sn, user_id=user.id).first_or_404()
     if request.method == "POST":
         todo.title = request.form.get("title")
         todo.desc = request.form.get("desc")
@@ -201,7 +190,7 @@ def delete(Sn):
     if not user:
         return redirect(url_for('login'))
 
-    todo = Loveson.query.filter_by(Sn=Sn).first_or_404()
+    todo = Loveson.query.filter_by(Sn=Sn, user_id=user.id).first_or_404()
     db.session.delete(todo)
     db.session.commit()
     flash("Task Deleted Successfully!", "success")
@@ -216,19 +205,19 @@ def center():
     if not user:
         return redirect(url_for('login'))
 
-    students = Student.query.order_by(Student.name).all()
-    records = Attendance.query.order_by(Attendance.id.desc()).all()
+    students = Student.query.filter_by(user_id=user.id).order_by(Student.name).all()
+    records = Attendance.query.filter_by(user_id=user.id).order_by(Attendance.id.desc()).all()
 
     total_days = len({r.date for r in records})
-    total_presents = Attendance.query.filter_by(status="Present").count()
-    total_absents = Attendance.query.filter_by(status="Absent").count()
+    total_presents = Attendance.query.filter_by(user_id=user.id, status="Present").count()
+    total_absents = Attendance.query.filter_by(user_id=user.id, status="Absent").count()
 
     selected_student = request.args.get("selected_student")
     student_records = []
     attendance_rate, student_presents, student_absents = 0, 0, 0
 
     if selected_student:
-        student_records = Attendance.query.filter_by(student_name=selected_student).all()
+        student_records = Attendance.query.filter_by(user_id=user.id, student_name=selected_student).all()
         if student_records:
             student_presents = sum(1 for r in student_records if r.status == "Present")
             student_absents = sum(1 for r in student_records if r.status == "Absent")
@@ -257,7 +246,7 @@ def add_student():
 
     name = request.form.get("name")
     if name:
-        db.session.add(Student(name=name.strip()))
+        db.session.add(Student(name=name.strip(), user_id=user.id))
         db.session.commit()
         flash("Student Added!", "success")
     return redirect(url_for("center"))
@@ -269,15 +258,15 @@ def mark():
     if not user:
         return redirect(url_for('login'))
 
-    students = Student.query.all()
+    students = Student.query.filter_by(user_id=user.id).all()
     today = datetime.now().strftime("%Y-%m-%d")
 
     for student in students:
         status = request.form.get(f"status_{student.id}")
         if status:
-            already = Attendance.query.filter_by(student_name=student.name, date=today).first()
+            already = Attendance.query.filter_by(user_id=user.id, student_name=student.name, date=today).first()
             if not already:
-                db.session.add(Attendance(student_name=student.name, status=status, date=today))
+                db.session.add(Attendance(student_name=student.name, status=status, date=today, user_id=user.id))
 
     db.session.commit()
     flash("Attendance Saved!", "success")
@@ -289,15 +278,15 @@ def mark():
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     user = get_current_user()
-    if not user:
-        return redirect(url_for('login'))
+    
 
     if request.method == "POST":
         msg = Message(
             name=request.form.get("name"),
             email=request.form.get("email"),
             subject=request.form.get("subject"),
-            message=request.form.get("message")
+            message=request.form.get("message"),
+            user_id=user.id
         )
         db.session.add(msg)
         db.session.commit()
@@ -313,7 +302,7 @@ def view_message():
     if not user:
         return redirect(url_for('login'))
 
-    messages = Message.query.order_by(Message.id.desc()).all()
+    messages = Message.query.filter_by(user_id=user.id).order_by(Message.id.desc()).all()
     return render_template("Message.html", Loveson_Messages=messages)
 
 # ==================================================
@@ -366,7 +355,9 @@ def restart():
     return redirect(url_for("fun"))
 
 
-# Initialize main DB
+# --------------------------------------------------
+# Database Initialization & Startup
+# --------------------------------------------------
 with app.app_context():
     db.create_all()
 
