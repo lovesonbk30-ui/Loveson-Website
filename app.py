@@ -274,21 +274,22 @@ def mark():
 # ==================================================
 # CONTACT MESSAGES
 # ==================================================
+# ==================================================
+# CONTACT MESSAGES
+# ==================================================
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
-    
-    
-
     if request.method == "POST":
         msg = Message(
             name=request.form.get("name"),
             email=request.form.get("email"),
             subject=request.form.get("subject"),
-            message=request.form.get("message"),
-            user_id=user.id
+            message=request.form.get("message")
         )
+
         db.session.add(msg)
         db.session.commit()
+
         flash("Your message has been sent successfully!", "success")
         return redirect(url_for("contact"))
 
@@ -297,13 +298,8 @@ def contact():
 
 @app.route("/View_message")
 def view_message():
-    user = get_current_user()
-    if not user:
-        return redirect(url_for('login'))
-
-    messages = Message.query.filter_by(user_id=user.id).order_by(Message.id.desc()).all()
+    messages = Message.query.order_by(Message.id.desc()).all()
     return render_template("Message.html", Loveson_Messages=messages)
-
 # ==================================================
 # QUIZ GAME & MISC
 # ==================================================
