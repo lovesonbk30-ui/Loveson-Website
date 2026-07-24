@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = "your_super_secret_session_key"
 
 # Uses Render/Neon PostgreSQL if present, otherwise defaults to local SQLite
-db_url = os.environ.get("DATABASE_URL", "sqlite:///app.db")
+
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://", 1)
 
