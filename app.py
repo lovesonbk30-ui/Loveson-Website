@@ -26,11 +26,10 @@ db = SQLAlchemy(app)
 # Database Models (Linked to Users via user_id)
 # --------------------------------------------------
 class User(db.Model):
-    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=True)
-    password = db.Column(db.String(500), nullable=False)
+    email = db.Column(db.String(120), unique=True)
+    password = db.Column(db.Text, nullable=False)   # ✅ Fix
 
 
 class Loveson(db.Model):
@@ -277,7 +276,7 @@ def mark():
 # ==================================================
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
-    user = get_current_user()
+    
     
 
     if request.method == "POST":
