@@ -1,27 +1,16 @@
-import os
-from datetime import datetime
-from flask import (
-    Flask, render_template, request, redirect, url_for, flash, session
-)
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
+ 
 
 # --------------------------------------------------
 # App & Database Configuration
 # --------------------------------------------------
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-import os
 
-app = Flask(__name__)
-
-database_url = os.environ.get("DATABASE_URL")
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
+app.secret_key = os.environ.get("SECRET_KEY", "your_super_secret_session_key")
 database_url = os.environ.get("DATABASE_URL")
 
 if database_url and database_url.startswith("postgres://"):
