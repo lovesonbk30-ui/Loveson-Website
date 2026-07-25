@@ -9,11 +9,29 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # --------------------------------------------------
 # App & Database Configuration
 # --------------------------------------------------
-app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "your_super_secret_session_key")
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+import os
 
-# Database setup (Uses DATABASE_URL or falls back to local SQLite)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///database.db")
+app = Flask(__name__)
+
+database_url = os.environ.get("DATABASE_URL")
+import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+
+database_url = os.environ.get("DATABASE_URL")
+
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace(
+        "postgres://",
+        "postgresql://",
+        1
+    )
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
@@ -63,8 +81,7 @@ class Message(db.Model):
     message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     # nullable=True allows guest users (not logged in) to send messages
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-
+    
 
 # Dynamic Helper to get current logged-in user
 def get_current_user():
