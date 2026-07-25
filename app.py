@@ -299,73 +299,7 @@ def mark():
 # TODO LIST
 # ==================================================
 
-@app.route("/todo", methods=["GET", "POST"])
-def home():
 
-    if request.method == "POST":
-
-        title = request.form.get("title")
-        desc = request.form.get("desc")
-
-        if title and desc:
-            todo = Loveson(
-                title=title,
-                desc=desc
-            )
-
-            db.session.add(todo)
-            db.session.commit()
-
-            flash("Task Added Successfully!", "success")
-
-        return redirect(url_for("home"))
-
-    all_todo = Loveson.query.order_by(Loveson.Sn.desc()).all()
-
-    return render_template(
-        "ToDo.html",
-        all_todo=all_todo
-    )
-
-
-@app.route("/product")
-def product():
-    return "This shows ToDo List"
-
-
-@app.route("/update/<int:Sn>", methods=["GET", "POST"])
-def update(Sn):
-
-    todo = Loveson.query.get_or_404(Sn)
-
-    if request.method == "POST":
-
-        todo.title = request.form.get("title")
-        todo.desc = request.form.get("desc")
-
-        db.session.commit()
-
-        flash("Task Updated Successfully!", "success")
-
-        return redirect(url_for("home"))
-
-    return render_template(
-        "update.html",
-        todo=todo
-    )
-
-
-@app.route("/delete/<int:Sn>")
-def delete(Sn):
-
-    todo = Loveson.query.get_or_404(Sn)
-
-    db.session.delete(todo)
-    db.session.commit()
-
-    flash("Task Deleted Successfully!", "success")
-
-    return redirect(url_for("home"))
 
 
 # ==================================================
