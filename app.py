@@ -142,7 +142,7 @@ def login():
 def dashboard():
     user = get_current_user()
     if not user:
-        return redirect(url_for('login'))
+        return redirect(url_for('main'))
     return render_template('dashboard.html', user=user.username)
 
 
