@@ -170,7 +170,7 @@ def home():
         return redirect(url_for("home"))
 
     all_todo = Loveson.query.filter_by(user_id=user.id).order_by(Loveson.Sn.desc()).all()
-    return render_template("ToDo.html", all_todo=all_todo)
+    return render_template("ToDo.html", all_todo=all_todo,user=user.username )
 
 
 @app.route("/update/<int:Sn>", methods=["GET", "POST"])
@@ -240,7 +240,8 @@ def center():
         student_records=student_records,
         attendance_rate=attendance_rate,
         student_presents=student_presents,
-        student_absents=student_absents
+        student_absents=student_absents,
+     user=user.username
     )
 
 
