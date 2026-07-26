@@ -142,14 +142,14 @@ def login():
 def dashboard():
     user = get_current_user()
     if not user:
-        return redirect(url_for('main'))
+        return redirect(url_for('login'))
     return render_template('dashboard.html', user=user.username)
 
 
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('main'))
 
 # ==================================================
 # TODO LIST
