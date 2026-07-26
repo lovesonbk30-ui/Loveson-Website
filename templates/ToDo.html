@@ -1,4 +1,4 @@
-{% extends 'Base.html' %}
+{% extends 'Dashboard_base.html' %}
       {% block body %}
     <style>
   
@@ -421,7 +421,16 @@
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
 }
-
+.flash-success{
+  background: #d4edda;
+  border: 1px solid #10b981;
+  color: green;
+  text-align: center;
+  padding: 12px; border-radius: 8px;
+  font-size: 1rem; text-align: center;
+  margin: 2px;
+  margin-bottom: 24px;
+}
     </style>
 </head>
 <body>
@@ -465,6 +474,18 @@
   
 
 </div>
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+ {% endif %}
+{% endwith %}
+  
  {% if all_todo|length == 0 %}
   
  <button class="notify-btn" role="alert">

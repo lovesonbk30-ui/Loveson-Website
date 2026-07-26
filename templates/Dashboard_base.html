@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✳️ Dashboard Base</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS Variables for easy theme management */
+        :root {
+            --bg-body: #0f172a;
+            --bg-surface: #1e293b;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #ff9800;
+            --accent-glow: rgba(255, 152, 0, 0.15);
+            --radius-md: 8px;
+            --radius-full: 9999px;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Modern CSS Reset */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header Styling */
+        .site-header {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-highlight {
+            color: var(--accent-color);
+        }
+
+        .workspace-badge {
+            background: var(--accent-glow);
+            color: var(--accent-color);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main Content Container */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Footer Styling */
+        footer {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .desc {
+            color: var(--text-secondary);
+        }
+
+        .designer-name {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 640px) {
+            .header-title {
+                font-size: 1.15rem;
+            }
+            .workspace-badge {
+                font-size: 0.68rem;
+                padding: 0.25rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-content">
+            <h1 class="header-title">
+                <span class="user-highlight">{{ user }}'s</span> Workspace
+            </h1>
+            <span class="workspace-badge">Dashboard</span>
+        </div>
+    </header>
+
+    <main>
+        {% block body %}
+        {% endblock body %}
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>
+                <span class="desc">Designed By: </span>
+                <span class="designer-name">Loveson Bk</span>
+            </p>
+            <p class="copyright">© Loveson Productivity Dashboard. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
