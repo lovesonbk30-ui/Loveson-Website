@@ -554,45 +554,59 @@ body{
   }
 
   /* Links wrapper grid structure */
+
   .help-link {
-    max-width: 900px;
-    width: 90%;
-    margin: 40px auto;
-    padding: 30px 20px;
-    background: #021259;
-    border: 1px solid #dcdcdc;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,.08);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    transition: .4s ease;
-  }
+  max-width: 900px;
+  width: 100%;
+  margin: 40px auto;
+  padding: 30px 20px;
+  background: #021259;
+  border: 1px solid #dcdcdc;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .08);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  transition: .4s ease;
+}
 
-  .help {
-    width: 100%;
-    text-align: center;
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    font-weight: 700;
-    color: #FFBD14;
-    margin-bottom: 12px;
-    border-bottom: 2px solid #2563eb;
-    padding-bottom: 10px;
-  }
+.help {
+  width: 100%; /* Forces title to take the entire top row */
+  text-align: center;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  color: #FFBD14;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #2563eb;
+  padding-bottom: 10px;
+}
 
-  .help-item {
-    background: #f8fafc;
-    color: #333;
-    border: 1px solid #d1d5db;
-    border-radius: 30px;
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: .3s;
-    text-decoration: none;
-  }
+.help-items-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+}
+.help-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  color: #333;
+  border: 1px solid #d1d5db;
+  border-radius: 30px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-direction: row;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  box-sizing: border-box;
+}
 
   .help-item:hover {
     background: #ED7E73;
@@ -605,6 +619,7 @@ body{
   .help-item:active {
     transform: scale(.97);
   }
+
 
   .break {
     width: 100%;
@@ -1066,10 +1081,12 @@ body{
 
     <div class="help-link">
         <p class="help">📎 Check this out</p>
+     <div class='help-items-wrapper'>
         <a href="/quiz" class="help-item">⚜️ Quiz Game</a>
         <a href="/dashboard" class="help-item">💾 Dashboard</a>
         <a href="/coding-guide" class="help-item">💻 Coding Guide</a>
         <a href="/art-craft" class="help-item">🖌️ Art & Craft</a>
+    </div>
     </div>
 
     <div class="rule">
